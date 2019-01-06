@@ -592,7 +592,14 @@ static NSFontDescriptor *getFontDescriptor(NSString *fullname) {
   NSColor *highlightedCommentTextColor;
 
   NSString *colorScheme = [config getString:@"style/color_scheme"];
-  if (colorScheme) {
+  if (!colorScheme || [colorScheme isEqualToString:@"native"]) {
+      // Respect system appearance settings.
+      [_window setAppearance:[_window effectiveAppearance]];
+  } else {
+      // Disable dark mode if using custom theme.
+      [_window setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
+
+      // Load custom properties from theme.
       NSString *prefix = [@"preset_color_schemes/" stringByAppendingString:colorScheme];
 
       backgroundColor = [config getColor:[prefix stringByAppendingString:@"/back_color"]];
